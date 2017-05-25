@@ -1,0 +1,11 @@
+site_name: incube
+site_description: API Management Platform
+repo_url: https://github.com/incube-io/kansas
+site_dir: site
+copyright: Copyright &copy; 2015, <a href="https://github.com/incube-io">incube-io</a>.
+
+pages:
+  - Home: 'index.md'
+  - API:
+    - Authentication: 'api/authentication.md'
+    - Users: 'api/users.md'

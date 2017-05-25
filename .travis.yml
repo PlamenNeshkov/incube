@@ -1,0 +1,40 @@
+language: python
+services:
+  - postgresql
+  - redis-server
+python:
+  - "2.7"
+before_script:
+- export DATABASE_URL=postgres://postgres@localhost/incube
+- export DJANGO_SECRET=`openssl rand -base64 32`
+- psql -c 'CREATE DATABASE "incube";' -U postgres
+install:
+  - "pip install -r requirements/test.txt"
+script:
+  - ./incube/manage.py test incube
+after_success:
+  - coveralls
+
+deploy:
+  provider: heroku
+  app:
+    master: incube-dev
+    qa: incube-qa
+    prod: incube-prod
+  on:
+    repo: incube-io/kansas
+  run:
+    - "./incube/manage.py migrate"
+
+notifications:
+  email: false
+
+# This reportedly works around an issue downloading packages from pypi on
+# travis. Consider removing this after the underlying issue is fixed.
+# https://github.com/travis-ci/travis-ci/issues/2389
+sudo: false
+
+matrix:
+  fast_finish: true
+
+cache: pip

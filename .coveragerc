@@ -1,0 +1,10 @@
+[run]
+branch = True
+omit = *migrations*,
+       *urls*,
+       *test*,
+       *admin*,
+       ./incube/config/*,
+       ./incube/manage.py,
+       ./incube/wsgi.py,
+       *__init__*
