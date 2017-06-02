@@ -14,6 +14,7 @@ class Common(Configuration):
     STRIPE_TOKEN_PATH = '/oauth/token'
 
     INSTALLED_APPS = (
+        'django_extensions',
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',

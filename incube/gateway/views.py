@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.models import API
+from requests.exceptions import ConnectionError
 
 from api_logging.services import log_call
 from api_auth.models import AuthMethod
@@ -65,10 +66,24 @@ class GatewayView(APIView):
             protocol = api.proxy_protocol,
             host = api.proxy_host.rstrip('\/'),
             path = request.path)
-        return method(proxy_url)
+        response = JsonResponse(
+            {'message': 'Unable to connect to remote API host'},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE
+        )
+        try:
+            response = method(proxy_url)
+        except ConnectionError:
+            pass
+        return response
 
     def proxy(self, request, method):
-        api = API.objects.from_request(request)
+        try:
+            api = API.objects.from_request(request)
+        except API.DoesNotExist:
+            return JsonResponse(
+                {'message': 'API matching this request does not exist'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         if is_request_size_exceeded(api, request):
             return JsonResponse(
